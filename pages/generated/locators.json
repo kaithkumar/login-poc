@@ -1,0 +1,9 @@
+{
+  "signInLink": "page.getByRole('link', { name: /sign in/i })",
+  "emailInput": "page.getByPlaceholder('Enter mobile number or email')",
+  "continueButton": "page.getByRole('button', { name: /continue/i })",
+  "passwordInput": "page.getByPlaceholder('Password')",
+  "signInButton": "page.getByRole('button', { name: /sign in/i })",
+  "signedInUrlNot": "signin|login",
+  "signedInText": ""
+}
