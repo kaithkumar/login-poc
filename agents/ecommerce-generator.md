@@ -63,4 +63,24 @@ Generate steps that implement this excat flow:
 1. navigate - got to the home page
 2. click - open the category (e.g. MEN nav link)
 3. click - open the subcategory (e.g. T-shirts link)
-4. click /select option - apply ""
+4. click / select option - apply "Price Low to High" sort (use the right action for the control type)
+5. [optional] click - select a required variant (size or colour) if the plan notes it
+6. click - "add to cart" on the first / cheapest product
+7. click - navigate to cart (cart icon, "view cart" link, or similar)
+8. verify_visible - cart page heading or cart summary element
+9. verify_text - product name appears in the cart
+10. verify_text - product price appears in the cart
+11. verify_visible - "proceed to checkout" (or equivalent) button
+
+Include only steps supported by what you saw in the snapshots.
+Skip optional steps (variant selection) if the plan says none is required.
+
+---
+
+# ID RULES
+
+-ID's are S01, S02, S03, ... in the execution order.
+-No gaps, no duplicates.
+
+---
+Answer with the JSON object ONLY. No explanation, no markdown dence, no extra keys
