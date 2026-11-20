@@ -55,7 +55,7 @@ Every locator must be single Javascript expression starting with `page.`:
 - Use Only names, labels and text visible in the provided snapshots - never invent them
 - No semicolons, backticks, arrow functions, chained filters, `$`, or XPath
 
-___
+---
 
 # STEP SEQUENCE TO GENERATE (TC-001)
 
