@@ -122,8 +122,8 @@ test.describe('E-commerce: ${safeTask}', () => {
 function writeProject(l) {
   mkdirSync('pages/generated', { recursive: true });
   mkdirSync('tests/generated', { recursive: true });
-  writeFileSync(LOCATORS_JSON, JSON.stringify(l, null, 2) + '\n');
-  writeFileSync(PAGE_FILE, pageTemplate(l));
+  writeFileSync(STEPS_JSON, JSON.stringify(l, null, 2) + '\n');
+  writeFileSync(PAGE_FILE, buildPageFile(l));
   writeFileSync(SPEC_FILE, specTemplate(l));
 }
 
@@ -187,7 +187,7 @@ module.exports = { EcommercePage };
 async function browse(agent, maxSteps, hint='') {
     const browser = await startBrowser(url, {});
     try {
-        const result = await exploreWithTools({
+        return await exploreWithTools({
             system: agentPrompt(agent),
             user: `Site URL: ${url}\nTask: ${task}\n${ hint ? `Hint: ${hint}\n` : '' }`,
             browser,
@@ -297,7 +297,7 @@ function runTest() {
     env: { ...process.env, BASE_URL: url },
     timeout: 5 * 60_000,
   });
-  return { ok: r.status === 0, output: redact(`${r.stdout || ''}${r.stderr || ''}`) };
+  return { ok: r.status === 0, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
 
@@ -356,7 +356,7 @@ async function main() {
     agentPrompt('ecommerce-generator'),
     `Approved plan:\n${approvedPlan}\n\nPage states seen during research:\n${states}`,
   );
-  writeProject(locators);
+  writeProject(stepsObj);
   console.log(`      wrote ${PAGE_FILE}\n      wrote ${SPEC_FILE}`);
 
 
