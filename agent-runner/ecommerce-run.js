@@ -340,7 +340,7 @@ async function main() {
     console.log('      WARNING: a CAPTCHA or verification step may be present. Automation may not be possible.');
   }
 
-  writeFileSync(PLAN, `${DRAFT}\n\n${redact(research.text)}\n`);
+  writeFileSync(PLAN, `${DRAFT}\n\n${research.text}\n`);
 
   console.log('\n[2/4] Waiting for human approval...');
   await humanApproval();
