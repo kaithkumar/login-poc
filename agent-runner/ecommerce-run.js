@@ -4,7 +4,7 @@ const { createInterface } = require('node:readline/promises');
 const { chat, MODEL } = require('./ollama');
 const { stepsSchema, parseSteps } = require('./steps-schema');
 const { startBrowser } = require('./browser');
-const { exploreWithTools, latestPageStates, hasSignInForm } = require('./agent');
+const { exploreWithTools, latestPageStates } = require('./agent');
 
 function parseArgs(argv) {
     const args = {};
@@ -46,7 +46,7 @@ const MAX_HEAL = 3;
 const MAX_RESEARCH_STEPS = 5;
 const BLOCKER_RE =   /captcha|verification code|one[- ]time|\botp\b|unusual activity|not a robot|robot check|puzzle|age.?gate|must.*sign.?in|login.?required/i;
 
-const agePrompt = (name) => readFileSync(`prompts/${name}.md`, 'utf-8').replace(/\n/g, ' ').trim();
+const agentPrompt = (name) => readFileSync(`agents/${name}.md`, 'utf-8').replace(/\n/g, ' ').trim();
 
 
 function pageTemplate(stepObj){

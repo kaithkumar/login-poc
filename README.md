@@ -36,12 +36,12 @@ export TEST_PASSWORD='...'
 npm run agent -- https://amazon.ai
 
 npm run agent:ecommerce -- \
-   --url https"//www.example.com \
+   --url https://www.example.com \
    --task "MEN > t-shirt, lowest price"
 
 
 npm run agent:ecommerce -- \
-   --url https"//www.example.com \
+   --url https://www.example.com \
    --task "WOMEN > jeans, lowest price"
 
 npm run
