@@ -40,13 +40,13 @@ const PLAN = 'specs/ecommerce.plan.md';
 const STEPS_JSON = 'pages/generated/ecommerce-steps.json';
 const PAGE_FILE = 'pages/generated/EcommercePage.js';
 const SPECS_FILE = 'tests/generated/ecommerce.spec.js';
-const DRAFT='STATUS: DRAFT - awaiting human approval';
-const APPROVED= 'STATUS: APPROVED';
+const DRAFT='Status: DRAFT - awaiting human approval';
+const APPROVED= 'Status: APPROVED';
 const MAX_HEAL = 3;
 const MAX_RESEARCH_STEPS = 5;
 const BLOCKER_RE =   /captcha|verification code|one[- ]time|\botp\b|unusual activity|not a robot|robot check|puzzle|age.?gate|must.*sign.?in|login.?required/i;
 
-const agentPrompt = (name) => readFileSync(`agents/${name}.md`, 'utf-8').replace(/\n/g, ' ').trim();
+const agentPrompt = (name) => readFileSync(`agents/${name}.md`, 'utf-8')
 
 
 function pageTemplate(stepObj){
@@ -102,7 +102,7 @@ class EcommercePage {
 function specTemplate (stepsObj) {
     const safeTask = stepsObj.task.replace(/[^a-zA-Z0-9]/g, '');
      return `const { expect, test } = require('@playwright/test');
-const { LoginPage } = require('../../pages/generated/EcommercePage');;
+const { EcommercePage } = require('../../pages/generated/EcommercePage');;
 
 test.describe('E-commerce: ${safeTask}', () => {
 
@@ -286,7 +286,7 @@ async function askForSteps(system, user)  {
             );
         }
     }
-    throw new Error(`The model did not return valid steps after 3 tries:"\n{lastError}`)
+    throw new Error(`The model did not return valid steps after 3 tries:\n{lastError}`)
 }
 
 
@@ -314,7 +314,7 @@ async function main() {
         'ecommerce-planner',
         MAX_RESEARCH_STEPS,
         'Your previous attempt did not reach product listing page.' +
-          `Try browser_find with category keyword from the task (e.g. "${task.split('<')[0].trim()}")`,+
+          `Try browser_find with category keyword from the task (e.g. "${task.split('>')[0].trim()}")`,+
           'copy the ref and click it. then look for the subcategory'
       ),
     );
@@ -409,7 +409,7 @@ function extractFailingStepHint(output, stepsObj){
         if(step){
             return(
                 `   The failing step is ${step.id}: "${step.description}" (action: ${step.action}).\n` +
-                `   Navigate to the site, replay steps up to just before ${step.id},  `
+                `   Navigate to the site, replay steps up to just before ${step.id},  `+
                 `   then capture a screenshot of the page where the failure occurs.  `
             )
         }
