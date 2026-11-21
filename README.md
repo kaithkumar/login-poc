@@ -34,7 +34,21 @@ ollama pull qwen3:8b          # already done on your machine
 export TEST_EMAIL='test-account@example.com'    # dedicated TEST account
 export TEST_PASSWORD='...'
 npm run agent -- https://amazon.ai
+
+npm run agent:ecommerce -- \
+   --url https"//www.example.com \
+   --task "MEN > t-shirt, lowest price"
+
+
+npm run agent:ecommerce -- \
+   --url https"//www.example.com \
+   --task "WOMEN > jeans, lowest price"
+
+npm run
 ```
+
+**Task format** `"<CATEGORY> > <subcategory> <price value>"`
+Examples: `"MEN > t-shirt, lowest price"`. `"WOMEN > jeans, lowest price"`
 
 The browser is Google Chrome by default (Playwright MCP's default). No Chrome? Set
 `MCP_BROWSER=msedge`, or `PW_EXECUTABLE_PATH=/path/to/a/chromium`.
