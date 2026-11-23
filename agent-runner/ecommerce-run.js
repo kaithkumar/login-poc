@@ -43,7 +43,7 @@ const SPECS_FILE = 'tests/generated/ecommerce.spec.js';
 const DRAFT='Status: DRAFT - awaiting human approval';
 const APPROVED= 'Status: APPROVED';
 const MAX_HEAL = 3;
-const MAX_RESEARCH_STEPS = 5;
+const MAX_RESEARCH_STEPS = 15;
 const BLOCKER_RE =   /captcha|verification code|one[- ]time|\botp\b|unusual activity|not a robot|robot check|puzzle|age.?gate|must.*sign.?in|login.?required/i;
 
 const agentPrompt = (name) => readFileSync(`agents/${name}.md`, 'utf-8')
@@ -138,6 +138,12 @@ function buildPageFile(stepsObj) {
                 break;
             case 'click':
                 body = `await ${s.locator}.click();`;
+                break;
+            case 'hover':
+                body = `await ${s.locator}.hover();`;
+                break;
+            case 'wait':
+                body = `await this.page.waitForTimeout(${Number(s.value)})`;
                 break;
             case 'select_option':
                 body = `await ${s.locator}.selectOption(${JSON.stringify(s.value)});`;
@@ -351,10 +357,12 @@ async function main() {
 
   const approvedPlan = readFileSync(PLAN, 'utf8');
 
+  const sortHint = buildSortHint(states)
+  
 
   let stepsObj = await askForSteps(
     agentPrompt('ecommerce-generator'),
-    `Approved plan:\n${approvedPlan}\n\nPage states seen during research:\n${states}`,
+    `Approved plan:\n${approvedPlan}\n\nPage states seen during research:\n${states}${sortHint}`,
   );
   writeProject(stepsObj);
   console.log(`      wrote ${PAGE_FILE}\n      wrote ${SPEC_FILE}`);
@@ -385,7 +393,7 @@ async function main() {
     }
     const healed = await askForSteps(
       agentPrompt('ecommerce-healer'),
-      `Current locators:\n${JSON.stringify(locators, null, 2)}\n\nFailure output (tail):\n${result.output.slice(-3000)}\n\nFresh page states:\n${freshStates}`,
+      `Current locators:\n${JSON.stringify(locators, null, 2)}\n\nFailure output (tail):\n${result.output.slice(-3000)}\n\nFresh page states:\n${freshStates}${sortHint}`,
     );
     if (JSON.stringify(healed) === JSON.stringify(locators)) {
       console.log('      The healer found nothing to change. The failure is probably not a locator problem.');
@@ -416,6 +424,43 @@ function extractFailingStepHint(output, stepsObj){
     }
     
   return 'Navigate to the site and replay the shopping journey upto the point of failure. capture a snapshot'
+}
+
+function buildSortHint(pageStates){
+    if (!pageStates) return ''
+    const isCustomSortWidget = 
+    /sort-sortBy|sort-list|sort-label|sort-downArrow/i.test(pageStates) ||
+    /type='radio'.*value='price_asc'|value="price_asc".*type="radio"/i.test(pageStates);
+
+    if(!isCustomSortWidget) return '';
+    return
+     `
+     ## SORT CONTROL -CUSTOM WIDGET (not a native <select>)
+     The sort control on this page is a CUSTOM dropdown built from radio buttons. It is not native HTML <select> element. You must 
+     NOT use "select_option" for sorting.
+
+     Instead use two sequential "click steps":
+     Step-A - Open the sort dropdown:
+     action: "click"
+     locator: page.getByText("sort by", {exact:false})
+     value: ""
+
+     Step-B - Click the desired sort option (eg. "Price Low to High"):
+     action: "click"
+     locator: page.getByText("Price Low to High", {exact:true})
+     value: ""
+
+     If the dropdown takes a moment to open, insert a "wait" step between A and B:
+     action: wait
+     locator: ""
+     value: "400"
+
+     The radio <input> element has values like "price_asc" (low-to-high).
+     "price_desc" (high-to-low), "popularity", "new", "discount".
+     always click the visible LABEL text, not the hidden input value.
+
+
+    `
 }
 
 main().catch((e) => {

@@ -1,15 +1,17 @@
 const ALLOWED_ACTIONS = [
   'navigate',
   'click',
+  'hover',
   'select_option',
   'fill',
+  'wait',
   'verify_text',
   'verify_visible',
   'verify_url_not',
 ];
 
-const NEEDS_LOCATOR = new Set(['click', 'select_option', 'fill', 'verify_text', 'verify_visible']);
-const NEEDS_VALUE = new Set(['navigate', 'select_option', 'fill', 'verify_text', 'verify_url_not']);
+const NEEDS_LOCATOR = new Set(['click', 'hover', 'select_option', 'fill', 'verify_text', 'verify_visible']);
+const NEEDS_VALUE = new Set(['navigate', 'select_option', 'fill', 'verify_text', 'verify_url_not', 'wait']);
 const LOCATOR_RE = /^page\.(getByRole|getByLabel|getByText|getByPlaceholder|getByTestId)\([^;`\n]*\)(\.(first|last)\(\))?$/;
 const LOCATOR_FORBIDDEN = ['${', '=>', 'function', 'require', 'import', 'eval', 'process', 'constructor'];
 const STEP_ID_RE = /^S\d{2}$/;
@@ -109,6 +111,14 @@ function parseSteps(raw){
         if (NEEDS_VALUE.has(step.action)) {
             if (typeof step.value !== 'string' || step.value.trim().length === 0) {
                 problems.push(`${loc} value must be a non empty string for action ${step.action}.`);
+            }
+            else if(step.action === 'wait'){
+                const ms = Number(step.value.trim());
+                if(!Number.isInteger(ms) || ms<=0 || ms> 10000){
+                    problems.push(
+                        `${loc}: action 'wait' requires a positive integer milliseconds value (1-10000) . Got ${JSON.stringify(step.value)}`
+                    )
+                }
             }
         }
     });
