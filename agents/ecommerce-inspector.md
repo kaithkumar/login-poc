@@ -17,7 +17,7 @@ A generated playwright test failed on a specific step. your job is to re-navigat
 2. Replay the journey UP TO AND INCLUDING the step BEFORE the failing one:
    - use the step descriptions from the failure message to know how far to go.
    - use `browser_find` to locate elements by keyboard if a ref is unknown
-   - For nav / category / subcategory clicks: follow the same path the test follows.
+   - follow the same navigation path the test follows, in the same order.
 3. At the page where the failure ocured, take a `browser_snapshot`.
 4. Use `browser_find` with one or two keywords from the failing step's description to locate the element.
    - Try the original label first

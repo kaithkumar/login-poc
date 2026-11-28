@@ -27,8 +27,8 @@ Return a single JSON object with this exact shape:
             "value": "<URL for navigate; option text for select_option; expected text for verify_text; pattern for verify_url_not; empty string otherwise>"
         }
     ],
-    "checkoutUrlNot": "<regex body matching cart/checkout URL patterns, e.g. cart|checkout|basket>",
-    "cartConfirmText": "<text visible in cart after adding item, e.g. 'your cart' or empty string>"
+    "checkoutUrlNot": "<OPTIONAL - only if the task involves a cart/checkout: regex body matching cart/checkout URL patterns, e.g. cart|checkout|basket. Omit or leave empty string for tasks>",
+    "cartConfirmText": "<OPTIONAL -  only if the task involves a cart: text visible in cart after adding item, e.g. 'your cart'. Omit or leave empty string for cart.>"
 }
 ```
 
@@ -57,23 +57,21 @@ Every locator must be single Javascript expression starting with `page.`:
 
 ---
 
-# STEP SEQUENCE TO GENERATE (TC-001)
+# HOW TO GENERATE THE STEPS
 
-Generate steps that implement this excat flow:
-1. navigate - got to the home page
-2. click - open the category (e.g. MEN nav link)
-3. click - open the subcategory (e.g. T-shirts link)
-4. click / select option - apply "Price Low to High" sort (use the right action for the control type)
-5. [optional] click - select a required variant (size or colour) if the plan notes it
-6. click - "add to cart" on the first / cheapest product
-7. click - navigate to cart (cart icon, "view cart" link, or similar)
-8. verify_visible - cart page heading or cart summary element
-9. verify_text - product name appears in the cart
-10. verify_text - product price appears in the cart
-11. verify_visible - "proceed to checkout" (or equivalent) button
+There is no fixed step sequence - the approved plan's own `Steps` list (under its `TC-001` test case) IS the flow to automate.
+Translate the flow to automate. Translate it one-to-one into the ordered JSON steps array:
+1. Read the plan's `TC-001` `Steps` list from top to bottom.
+2. For each plan step, emit one JSON step object (or, if a single plan step really implies more than one action -
+e.g. "fill the search box and press Enter" - emit one JSON step per action, in the same order).
+3. Pick `action` from the allowed-actions table that matches what that step actually does
+(a navigation is `navigate` a click is `click`, choosing from a native `<select>` is `select_option`, typing text is `fill`
+, a check that something is shown/contains text/the URL changed is `verify_visible` / `verify_text` / `verify_url_not`, and so on).
+4. Build each `locator` strictly from the names, labels and text you can see in the provided page
+   states - never invent a lable the snapshots don't show.
+5. The LAST one or more steps must be verification steps (`verify_visible` / `verify_text` / `verify_url_not`) that check whatever the plan's "Expected Result" says proves the task succeeded.
 
-Include only steps supported by what you saw in the snapshots.
-Skip optional steps (variant selection) if the plan says none is required.
+Include only steps supported by what you saw in the snapshots. Do not add steps the plan did not describe, and do not skip steps the plan did describe.
 
 ---
 

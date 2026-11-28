@@ -1,5 +1,5 @@
 const HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const MODEL = process.env.OLLAMA_MODEL || 'qwen2.5-coder:14b';
+const MODEL = process.env.OLLAMA_MODEL || 'qwen3:14b';
 // Playwright snapshots are long. Ollama's default context is small, so raise it.
 const NUM_CTX = Number(process.env.OLLAMA_NUM_CTX || 16384);
 
